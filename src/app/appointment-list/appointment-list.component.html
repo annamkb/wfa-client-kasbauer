@@ -1,0 +1,58 @@
+<bs-appointment-container>
+  @if (isLoggedIn()) {
+    <h1>Nachhilfetermine</h1>
+    <p>Hier findest du alle anstehenden Termine.</p>
+
+    @if (currentUser()?.role === 'student') {
+
+      <div>
+        <p>
+          Du kannst die Termine hier filtern:
+        </p>
+        <ul class="list-disc list-inside ml-4 mt-1">
+          <li>Offene Termine, die du bei Interesse akzeptieren kannst.</li>
+          <li>Deine bereits akzeptierten Termine, also gebuchte Nachhilfestunden.</li>
+          <li>Termine, die du abgelehnt hast und für die du Änderungsvorschläge angefragt hast.</li>
+        </ul>
+      </div>
+      @if(isLoggedIn()){
+        <bs-appointment-status-filter (statusSelected)="onStatusSelected($event)"></bs-appointment-status-filter>
+      }
+    }
+
+    @if (isLoading()) {
+      <div class="flex justify-center my-8">
+        <span class="loading loading-ring loading-xl"></span>
+      </div>
+    }
+
+    <!-- Fehler oder leere Liste -->
+    @if (!isLoading() && appointments() && appointments()?.length === 0) {
+      <div>
+        Es gibt derzeit keine passenden Termine.
+      </div>
+    }
+
+
+
+    <div class="flex flex-col gap-4 mt-4">
+      @for (appointment of appointments(); track appointment) {
+        <a
+          class="bs-appointment-list-item"
+          [appointment]="appointment"
+          [routerLink]="['/offers', appointment?.offer?.id]"
+        ></a>
+      }
+    </div>
+
+    <div class="home-button mt-6">
+      <a routerLink="/" class="btn btn-primary">Zurück zur Startseite</a>
+    </div>
+  } @else {
+    <p>
+      Bitte
+      <a [routerLink]="'/login'" class="text-primary underline">einloggen</a>,
+      um die Termine zu sehen.
+    </p>
+  }
+</bs-appointment-container>

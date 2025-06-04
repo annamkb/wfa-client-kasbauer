@@ -1,0 +1,113 @@
+@if (isLoggedIn() && role() === 'teacher') {
+
+  <div>
+
+  <h1 class="mb-6">Formular Nachhilfeangebot</h1>
+
+  <form [formGroup]="offerForm" (ngSubmit)="submitForm()" class="flex flex-col gap-4 border rounded-lg p-4">
+    <div class="field flex flex-row gap-4 p-4">
+      <label class="p-2">Beschreibung</label>
+      <input class="border rounded-lg p-2" type="text" placeholder="Beschreibung des Angebots" formControlName="description">
+      @if (errors['description']){
+        <div>{{errors['description']}}</div>
+      }
+    </div>
+
+    <div class="field flex flex-row gap-4 p-4 form-group">
+      <label class="p-2" for="subject">Fach</label>
+      <select class="form-control border rounded-lg p-2" id="subject_id" formControlName="subject_id" required>
+        <option value="">Bitte Fach auswählen</option>
+        @for (subject of subjects(); track subject.id) {
+          <option [value]="subject.id">{{ subject.name }}</option>
+        }
+      </select>
+      @if (errors['subject_id']){
+        <div>{{errors['subject_id']}}</div>
+      }
+    </div>
+
+
+    <div class="field">
+      <label>Termine</label>
+      <div formArrayName="appointments" class="flex flex-col gap-4">
+
+        @for (control of appointments.controls; let i = $index, l=$last; track i) {
+          <div [formGroupName]="i" class="fields border rounded-lg p-4 my-2 flex flex-col gap-2">
+
+            <input type="hidden" formControlName="id">
+
+            <label for="date">Datum:</label>
+            <input type="date" formControlName="date" class="border p-2 rounded" />
+            @if(errors['appointments[' + i + '].date']) {
+              <div>{{ errors['appointments[' + i + '].date'] }}</div>
+            }
+
+            <label for="time">Uhrzeit:</label>
+            <input type="time" formControlName="time" class="border p-2 rounded" />
+            @if(errors['appointments[' + i + '].time']) {
+              <div>{{ errors['appointments[' + i + '].time'] }}</div>
+            }
+
+
+            <label for="status">Status:</label>
+            @if (isUpdatingOffer) {
+              <select
+                class="form-control mb-2"
+                formControlName="status"
+              >
+                @for (status of statuses(); track $index) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+              @if (errors['appointments[' + i + '].status']) {
+                <div>{{ errors['appointments[' + i + '].status'] }}</div>
+              }
+            }
+            @else {
+              <input
+                type="text"
+                class="form-control mb-2"
+                [value]="statuses()[0]"
+                disabled
+              />
+            }
+
+
+            <label for="comment">Kommentar:</label>
+            <input formControlName="comment" placeholder="Optionaler Kommentar" class="border p-2 rounded" />
+            @if (errors['appointments[' + i + '].comment']) {
+              <div>{{ errors['appointments[' + i + '].comment'] }}</div>
+            }
+
+              <button type="button" (click)="removeAppointmentControl(i)" class="text-red-600 mt-2">
+                Entfernen
+              </button>
+          </div>
+
+
+          }
+      </div>
+      <div>
+        <button type="button" (click)="addAppointmentControl()" class="btn btn-primary btn-outline">
+          Weiteren Termin hinzufügen
+        </button>
+      </div>
+    </div>
+
+    <div class="flex justify-center">
+      <button type="submit" class="btn btn-primary" [disabled]="offerForm.invalid">Speichern</button>
+    </div>
+  </form>
+
+</div>
+}
+@else {
+  <div class="flex gap-4 flex-col">
+    <p>
+      Du bist nicht berechtigt, ein Angebot zu erstellen.
+    </p>
+    <div class="home-button">
+      <a routerLink="/" class="btn btn-primary">Zurück zur Startseite</a>
+    </div>
+  </div>
+}

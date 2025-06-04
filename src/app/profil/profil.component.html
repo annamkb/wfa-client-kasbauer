@@ -1,0 +1,37 @@
+<bs-profil-container>
+
+<div class="flex flex-col gap-5">
+    @if (currentUser()){
+      <h1>Hallo {{ currentUser()?.name }}!</h1>
+      <p>Hier findest du einen Überblick über die wichtigsten Inhalte für dich.</p>
+      @if (role() === 'teacher'){
+        <p> Behalte den Überblick über deine Nachhilfeangebote, deine Termine mit den Students und Anfragen
+          beziehungsweise Zusagen dazu. </p>
+      } @else {
+        <p> Behalte alle deine anstehenden Nachhilfestunden im Blick. </p>
+      }
+    }
+    <section class="appointments-section flex flex-col gap-4">
+      <bs-accepted-appointments></bs-accepted-appointments>
+
+      <div class="appointments-button">
+        <a routerLink="/appointments" class="btn btn-primary">Zu allen Terminen</a>
+      </div>
+
+    </section>
+
+    @if(role() === 'teacher'){
+      <section class="offers-section flex flex-col gap-4">
+        <h2>Nachhilfeangebote</h2>
+        <h3>Hier siehst du die von dir angebotenen Nachhilfeangebote</h3>
+        <p>Klicke auf den Button um zu der gefilterten Angebotsliste zu gelangen.</p>
+        <div class="offers-button">
+          <a [routerLink]="['/offers']" [queryParams]="{own: true}" class="btn btn-primary">Zu meinen Angeboten</a>
+        </div>
+
+      </section>
+    }
+
+  </div>
+
+</bs-profil-container>

@@ -1,0 +1,93 @@
+@if(!isLoggedIn()){
+  <div class="max-w-md mx-auto p-6 flex flex-col gap-4 rounded-lg border">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6">
+      <div>
+        <label for="username" class="block mb-2 font-semibold">E-Mail</label>
+        <input
+          type="email"
+          id="username"
+          formControlName="username"
+          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+        @if(loginForm.get('username')?.invalid &&
+        (loginForm.get('username')?.dirty || loginForm.get('username')?.touched) &&
+        loginForm.get('username')?.hasError('required')){
+          <div class="mt-1 text-sm text-red-600">Benutzername ist verpflichtend</div>
+        }
+        @if(loginForm.get('username')?.invalid &&
+        (loginForm.get('username')?.dirty || loginForm.get('username')?.touched) &&
+        loginForm.get('username')?.hasError('email')){
+          <div class="mt-1 text-sm text-red-600">E-Mail Format überprüfen</div>
+        }
+      </div>
+
+      <div>
+        <label for="password" class="block mb-2 font-semibold">Passwort</label>
+        <input
+          type="password"
+          formControlName="password"
+          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+        @if(loginForm.get('password')?.invalid &&
+        (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)){
+          <div class="mt-1 text-sm text-red-600">Passwort ist verpflichtend</div>
+        }
+      </div>
+
+      @if(loginError){
+        <div class="text-red-600">
+          {{ loginError }}
+        </div>
+      }
+
+
+      <div>
+        <button
+          class="btn btn-sm btn-outline btn-primary rounded-full px-4 py-2"
+          title="Login"
+          aria-label="Login"
+          [disabled]="loginForm.invalid"
+          type="submit"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (loadingLogin()) {
+  <div class="flex justify-center items-center my-8">
+    <span class="loading loading-ring loading-xl"></span>
+    <span class="ml-2">Login wird verarbeitet...</span>
+  </div>
+}
+
+@if (!loadingLogin() && isLoggedIn()) {
+  @if (loadingUser()) {
+    <div class="flex justify-center items-center my-8">
+      <span class="loading loading-ring loading-xl"></span>
+      <span class="ml-2">Benutzerdaten werden geladen...</span>
+    </div>
+  }
+
+  @if (!loadingUser() && currentUser()) {
+    <div class="max-w-md mx-auto p-6 border rounded-lg flex flex-col gap-4">
+
+    <p>Du bist gerade eingeloggt als <strong>{{ currentUser()?.name }}</strong>.</p>
+    <p>Benutzername: {{ currentUser()?.name }}</p>
+    <p>Ausbildung: {{ currentUser()?.education }}</p>
+    <p>ID: {{ currentUserId() }}</p>
+    <p>E-Mail: {{ currentUser()?.email }}</p>
+    <p>Kontakt: {{ currentUser()?.contact }}</p>
+    <p>Rolle: {{ currentUser()?.role }}</p>
+    <div>
+      <button (click)="logout()" class="btn btn-sm btn-outline btn-primary rounded-full px-4 py-2" title="Logout" aria-label="Logout">
+        Logout
+      </button>
+    </div>
+    </div>
+  }
+}
+

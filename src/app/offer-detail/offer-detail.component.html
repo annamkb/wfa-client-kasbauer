@@ -1,0 +1,167 @@
+<!--als student sollen mir jetzt nur die termine angezeigt werden die noch offered sind oder die von mir accepted oder rejected sind-->
+<!--filter für status-->
+<!--und ich soll dann den status auf accepted oder rejected setzten können und wenn ich rejected setze soll ich ein kommentar feld bekommen-->
+
+
+@let o = offer();
+@let apps = userRole() === 'student' ? filteredAppointments() : appointments();
+
+
+<h1 class="mb-8">Offer Detailansicht</h1>
+
+
+@if (o){
+  <div class="gap-4 flex flex-col">
+    <h2 class="normal-case">{{ o.description }}</h2>
+    <h2 class="text-base">{{ o.subject?.name }}</h2>
+  </div>
+
+  <div class="flex flex-col gap-4">
+    <h3 class="my-4">Teacher</h3>
+    <div class="flex items-center gap-4 border rounded-lg p-4">
+      <div class="avatar">
+        <div class="w-12 h-12 rounded-full overflow-hidden">
+          <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + o.user?.name + '&backgroundColor=9fe88d'"/>
+        </div>
+      </div>
+      <div>
+        <div class="font-semibold">{{ o.user?.name }}</div>
+        <div>{{ o.user?.education }}</div>
+        <div>{{ o.user?.contact }}</div>
+        <div>{{ o.user?.email }}</div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <h3 class="my-4">Termine</h3>
+    @if (userRole() === 'student') {
+      <bs-appointment-status-filter (statusSelected)="onStatusSelected($event)"></bs-appointment-status-filter>
+    }
+    @if (apps?.length) {
+      <ul class="flex flex-col gap-2">
+        @for (app of apps; track app.id) {
+          <li class="border p-2 rounded">
+            <div><strong>Datum:</strong> {{ app.scheduled_at }}</div>
+            <div><strong>Status:</strong> {{ app.status }}</div>
+            <div>Offer {{ app.offer_id }} </div>
+            <div>User:
+              @if (user()){
+                {{ app.user?.name }}
+              } @else {
+                Bis jetzt ist noch niemand am Termin interessiert.
+              }
+
+             </div>
+
+            @if (userRole() === 'student' && (app.status === 'offered' || app.user_id === currentUserId())) {
+              <div class="flex gap-2 mt-2">
+
+                    @if (app.status === 'offered') {
+                      <div class="flex flex-col gap-2">
+                        <!-- Button-Leiste -->
+                        <div class="flex gap-2">
+                          <button class="btn btn-primary btn-sm" (click)="updateStatus(app.id, 'accepted')">
+                            Annehmen
+                          </button>
+
+                          <button class="btn btn-secondary btn-sm" (click)="toggleReject(app.id)">
+                            Ablehnen
+                          </button>
+                        </div>
+
+                        @if (rejectingId() === app.id) {
+                          <div class="mt-2 border border-gray-300 rounded p-2">
+                            <label class="block text-sm font-medium mb-1" for="reject-comment-{{ app.id }}">
+                              Kommentar (optional)
+                            </label>
+                            <textarea
+                              id="reject-comment-{{ app.id }}"
+                              class="w-full border rounded p-1 text-sm"
+                              [(ngModel)]="rejectComment"
+                              rows="3"
+                              placeholder="Begründung oder Wunsch eingeben"
+                              maxlength="500">
+                               </textarea>
+                            <div class="flex gap-2 mt-2">
+                              <button class="btn btn-sm btn-error" (click)="submitRejection(app.id)">
+                                Ablehnung absenden
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+
+
+
+
+                @if (app.status === 'accepted') {
+                  <span class="text-primary font-semibold">✅ Angenommen</span>
+                }
+
+                @if (app.status === 'rejected') {
+                  <div>
+                    <div class="text-secondary font-semibold">❌ Abgelehnt</div>
+                    @if (app.comment) {
+                      <div class="mt-1 text-sm">
+                        <strong>Kommentar:</strong> {{ app.comment }}
+                      </div>
+                    }
+                  </div>
+                }
+
+              </div>
+            }
+          </li>
+
+        }
+      </ul>
+    } @else {
+      <div class="border rounded-lg p-4">
+        @if (isLoggedIn()){
+          <p>Keine Termine verfügbar.</p>
+        } @else {
+          <p>Bitte <a [routerLink]="'/login'" class="text-primary underline">einloggen</a> um die Termine zu sehen.</p>
+        }
+      </div>
+    }
+
+    @if (isOwnerTeacher()) {
+      <div class="flex flex-row gap-4">
+        <button
+          class="btn btn-sm btn-outline btn-primary rounded-full px-4 py-2"
+          title="Bearbeiten"
+          aria-label="Bearbeiten"
+          [routerLink]="['../../admin', o.id]"
+        >
+          Nachhilfeangebot bearbeiten
+        </button>
+
+        <button
+          class="btn btn-sm btn-outline btn-primary rounded-full px-4 py-2"
+          title="Löschen"
+          aria-label="Löschen"
+          (click)="removeOffer()"
+        >
+          Nachhilfeangebot löschen
+        </button>
+      </div>
+    }
+  }
+  @else {
+    <div class="flex items-center gap-4 border rounded-lg p-4">
+
+      <p>Bitte <a [routerLink]="'/login'" class="text-primary underline">einloggen</a>, um die Termine zu sehen.</p>
+    </div>
+
+  }
+
+
+<div class="mt-6">
+  <button [routerLink]="['/offers']" [queryParams]="{ own: own() }" class="btn btn-outline btn-primary">
+    Zurück zur Angebotsliste
+  </button>
+
+</div>

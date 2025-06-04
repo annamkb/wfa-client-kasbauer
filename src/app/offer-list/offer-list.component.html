@@ -1,0 +1,73 @@
+
+<bs-offer-container>
+  <h1>Nachhilfeangebote</h1>
+  <p>Hier ist die Auflistung nach allen Nachhilfeangeboten.</p>
+
+  @if (isLoggedIn() && userRole() === 'student' && currentUser()) {
+    <div>
+      Schau dir die Angebote zu den einzelnen Fächern von unseren Nachhilfegebenden durch und buche dir einfach
+      einen Termin, sobald du ein passendes Angebot gefunden hast.
+    </div>
+  }
+
+  <div class="flex flex-col gap-4">
+    @if (isLoggedIn() && userRole() === 'teacher' && currentUser()) {
+    <a routerLink="/admin">
+      <button class="btn btn-primary mb-4">
+        Angebot erstellen
+      </button>
+    </a>
+  }
+
+  <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+    @if (isLoggedIn() && userRole() === 'teacher' && currentUser()) {
+      <button (click)="toggleShowOwnOffers()" class="btn btn-primary btn-outline">
+        {{ showOwnOffers() ? 'Alle Angebote anzeigen' : 'Nur eigene Angebote anzeigen' }}
+      </button>
+    }
+
+    <bs-subject-filter (subjectSelected)="onSubjectSelected($event)"></bs-subject-filter>
+  </div>
+
+  @if (showOwnOffers() && currentUser()) {
+    <p class="opacity-75">
+      Es werden nur Angebote von dir (Teacher: {{ currentUser()?.name }}) angezeigt.
+    </p>
+  }
+</div>
+
+  @if (loading()) {
+    <div class="flex justify-center my-8">
+      <span class="loading loading-ring loading-xl"></span>
+    </div>
+  }
+
+  @if (!loading() && error()) {
+    <div class="my-4">
+      Fehler beim Laden der Angebote. Bitte versuche es später erneut.
+      {{error()}}
+    </div>
+  }
+
+  @if (offers() && !offers()?.length) {
+    <p>Es gibt noch keine Nachhilfeangebote.</p>
+  }
+
+  @if (!loading() && (offers()?.length ?? 0) > 0){
+  <ul class="list">
+      @for (offer of offers(); track offer) {
+        <a class="bs-offer-list-item list-row"
+           [offer]="offer"
+           [routerLink]="[offer.id]"
+           [queryParams]="{ own: showOwnOffers() }"
+        ></a>
+      }
+    </ul>
+  }
+
+
+  <div class="home-button">
+    <a routerLink="/" class="btn btn-primary">Zurück zur Startseite</a>
+  </div>
+</bs-offer-container>
+

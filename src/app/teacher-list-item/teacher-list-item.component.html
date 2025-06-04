@@ -1,0 +1,26 @@
+@let t = teacher();
+
+<div class="flex flex-wrap justify-center gap-6">
+  <div
+    class="flex flex-col items-center border rounded-lg p-4
+           w-full sm:w-[18rem] text-center"
+  >
+    <div class="avatar mb-2">
+      <div class="w-16 h-16 rounded-full overflow-hidden mx-auto">
+        <img
+          [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + t.name + '&backgroundColor=9fe88d'"
+          alt="{{ t.name }}"
+          class="object-cover w-full h-full"
+        />
+      </div>
+    </div>
+
+    <div class="font-semibold text-lg">{{ t.name }}</div>
+
+    <div class="opacity-50 text-sm mt-1">
+      <div>{{ t.education }}</div>
+      <div>{{ t.email }}</div>
+      <div>{{ t.contact }}</div>
+    </div>
+  </div>
+</div>

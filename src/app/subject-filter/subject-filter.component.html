@@ -1,0 +1,7 @@
+<!--any bei dem event target ugly aber chatgpt hat vorgeschlagen und ich hab keinen besseren weg gefunden-->
+<select class="form-select border rounded-full px-4 py-2" (change)="onChange($any($event.target).value)">
+  <option value="">Alle Fächer</option>
+  @for (subject of subjects(); track subject.id) {
+    <option [value]="subject.id">{{ subject.name }}</option>
+  }
+</select>

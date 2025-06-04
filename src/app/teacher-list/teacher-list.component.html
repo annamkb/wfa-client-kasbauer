@@ -1,0 +1,32 @@
+<bs-teacher-container>
+  <h1>Nachhilfegebende</h1>
+  <p>Hier findest du alle unsere Lehrenden.</p>
+
+  @if (teachers.isLoading()) {
+    <div class="flex justify-center my-8">
+      <span class="loading loading-ring loading-xl"></span>
+    </div>
+  }
+
+  @if (!teachers.isLoading() && !teachers.value()) {
+    <div class="my-4">
+      Fehler beim Laden der Lehrenden. Bitte versuche es später erneut.
+    </div>
+  }
+
+  @if (teachers.value() && !teachers.value()?.length) {
+    <p>Es gibt derzeit noch keine Nachhilfegebenden.</p>
+  }
+
+  @if (teachers.value()?.length) {
+    <div class="flex flex-wrap flex-row gap-4">
+      @for (teacher of teachers.value(); track teacher) {
+        <a class="bs-teacher-list-item" [teacher]="teacher"></a>
+      }
+    </div>
+  }
+
+  <div class="mt-6">
+    <a routerLink="/" class="btn btn-primary">Zurück zur Startseite</a>
+  </div>
+</bs-teacher-container>

@@ -1,0 +1,28 @@
+@let o = offer();
+
+<li class="grid grid-cols-[16rem_16rem_8rem] items-strech center gap-4 pr-4 border rounded-lg">
+
+  <div class="border-r p-4 h-full flex flex-col justify-center">
+    <div class="font-semibold">{{ o.subject?.name }}</div>
+    <div>{{ o.description }}</div>
+  </div>
+
+  <div class="flex flex-row border-r p-4 gap-8 items-center justify-center">
+    <div class="avatar">
+      <div class="w-12 h-12 rounded-full overflow-hidden">
+        <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + o.user?.name + '&backgroundColor=9fe88d'" alt="{{ o.user?.name }}" />
+      </div>
+    </div>
+
+    <div>
+      <div class="font-semibold">{{ o.user?.name }}</div>
+      <div>{{ o.user?.education }}</div>
+      <div>{{ o.user?.contact }}</div>
+    </div>
+  </div>
+
+  <div class="flex justify-center items-center">
+  </div>
+
+</li>
+

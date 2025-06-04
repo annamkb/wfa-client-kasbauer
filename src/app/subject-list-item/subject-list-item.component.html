@@ -1,0 +1,30 @@
+@let s = subject();
+
+@if (compact()) {
+  <div class="badge badge-outline badge-lg cursor-pointer hover:badge-primary transition">
+    {{ s.name }}
+  </div>
+} @else if (overview()) {
+  <div class="border rounded-lg p-4 flex flex-col justify-between">
+    <div class="font-semibold text-center break-all">{{ s.name }}</div>
+  </div>
+} @else {
+    <div class="collapse rounded border rounded-lg w-full items-center">
+      <input type="checkbox" class="peer hidden" id="desc-{{ s.id }}" />
+      <label for="desc-{{ s.id }}"
+             class="collapse-title cursor-pointer rounded-t
+                    bg-transparent text-current
+                    transition-colors duration-300
+                    block px-3">
+        {{ s.name }}
+      </label>
+      <div class="collapse-content
+                  text-sm text-current bg-transparent
+                  rounded-b
+                  transition-colors duration-300
+                  whitespace-pre-line
+                  px-3">
+        {{ s.description }}
+      </div>
+  </div>
+}

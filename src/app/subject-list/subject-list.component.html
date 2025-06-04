@@ -1,0 +1,33 @@
+<bs-subject-container>
+  <h1>Nachhilfefächer</h1>
+  <div>Hier findest du alle unsere Nachhilfefächer. Klicke auf die Fächer um eine Beschreibung zu sehen.</div>
+
+  @if (subjects.isLoading()) {
+    <div class="flex justify-center my-8">
+      <span class="loading loading-ring loading-xl"></span>
+    </div>
+  }
+
+  @if (!subjects.isLoading() && !subjects.value()) {
+    <div class="my-4">
+      Fehler beim Laden der Fächer. Bitte versuche es später erneut.
+    </div>
+  }
+
+  @if (subjects.value() && !subjects.value()?.length) {
+    <p>Es sind derzeit keine Nachhilfefächer verfügbar.</p>
+  }
+
+  @if (subjects.value()?.length) {
+    <div class="flex flex-col w-full gap-4">
+      @for (subject of subjects.value(); track subject) {
+        <a class="bs-subject-list-item" [subject]="subject" [compact]="compact" [overview]="overview"></a>
+      }
+    </div>
+  }
+
+  <div class="flex flex-row gap-4 mt-6">
+    <a routerLink="/" class="btn btn-primary">Zurück zur Startseite</a>
+    <a routerLink="/offers" class="btn btn-primary">Zu den Angeboten</a>
+  </div>
+</bs-subject-container>

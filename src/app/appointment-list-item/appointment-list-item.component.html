@@ -1,0 +1,16 @@
+@let a = appointment();
+
+<li class="list-none border rounded-lg w-full p-2 sm:p-0 sm:grid sm:grid-cols-[8rem_auto_6rem] sm:items-center sm:gap-x-4 sm:pr-4">
+
+  <div class="hidden sm:flex sm:flex-col sm:justify-center sm:border-r sm:p-4">
+    <div class="font-semibold">{{ a.scheduled_at }}</div>
+  </div>
+
+  <div class="hidden sm:flex sm:flex-col h-full sm:justify-center sm:border-r sm:p-4">
+    <div>{{ a.offer?.description }}</div>
+  </div>
+
+  <div class="hidden sm:flex sm:justify-end sm:p-4">
+    <div class="text-sm font-semibold">{{ a.status }}</div>
+  </div>
+</li>
