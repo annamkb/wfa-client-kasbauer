@@ -33,8 +33,8 @@ tutoring_kasbauer/
 ### Lokales Klonen der Repositories
 
 ```bash
-git clone https://github.com/annamkb/wfa-tutoring-angular.git client
-git clone https://github.com/annamkb/wfa-tutoring.git server
+https://github.com/annamkb/wfa-client-kasbauer.git
+https://github.com/annamkb/wfa-tutoring.git
 ```
 
 ### Client (Angular)
