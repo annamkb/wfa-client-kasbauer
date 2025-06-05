@@ -14,7 +14,7 @@ export const routes: Routes = [
   {path:'', redirectTo:'home', pathMatch:'full'},
   {path:'home', component: HomeComponent},
   {path:'offers', component: OfferListComponent},
-  {path:'offers/:id', component: OfferDetailComponent},
+  {path:'offers/:id', component: OfferDetailComponent}, // :id is dynamic route parameter
   {path:'subjects', component: SubjectListComponent},
   {path:'teachers', component: TeacherListComponent},
   {path:'appointments', component: AppointmentListComponent},

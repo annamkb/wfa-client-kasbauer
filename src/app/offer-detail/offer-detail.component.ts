@@ -12,11 +12,12 @@ import { AuthenticationService } from '../shared/authentication.service';
 import { User } from '../shared/user';
 import { AppointmentStatusFilterComponent } from '../appointment-status-filter/appointment-status-filter.component';
 import { FormsModule } from '@angular/forms';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'bs-offer-detail',
   standalone: true,
-  imports: [RouterLink, AppointmentStatusFilterComponent, FormsModule],
+  imports: [RouterLink, AppointmentStatusFilterComponent, FormsModule, NgClass],
   templateUrl: './offer-detail.component.html',
   styles: ``
 })
@@ -35,6 +36,8 @@ export class OfferDetailComponent implements OnInit {
 
   rejectingId = signal<number | null>(null);
   rejectComment = signal<string>('');
+  appointmentTimeFilter = signal<'all' | 'upcoming' | 'past'>('all');
+  loading = signal(false);
 
   private router = inject(Router);
 
@@ -99,6 +102,8 @@ export class OfferDetailComponent implements OnInit {
   }
 
   loadFilteredAppointments() {
+    this.loading.set(true);
+
     const user = this.currentUser();
     const offer = this.offer();
 
@@ -107,15 +112,39 @@ export class OfferDetailComponent implements OnInit {
       return;
     }
 
-    const status = this.appointmentStatusFilter();
+    const timeFilter = this.appointmentTimeFilter();
 
-    this.ts
-      .getFilteredAppointmentsForStudentByOffer(offer.id, status || '')
-      .subscribe({
-        next: (apps) => this.filteredAppointments.set(apps),
-        error: () => this.filteredAppointments.set([])
-      });
+    this.ts.getAppointmentsHistory(user.id).subscribe({
+      next: ({ upcoming, past }) => {
+        // Kombinieren und filtern
+        const combined = [...upcoming, ...past];
+
+        const relevantAppointments = combined.filter(app =>
+          app.offer_id === offer.id &&
+          (
+            app.status === 'offered' ||
+            (app.user_id === user.id && (app.status === 'accepted' || app.status === 'rejected'))
+          )
+        );
+
+        const now = new Date();
+        const final = relevantAppointments.filter(app => {
+          const scheduledDate = new Date(app.scheduled_at);
+          if (timeFilter === 'upcoming') return scheduledDate >= now;
+          if (timeFilter === 'past') return scheduledDate < now;
+          return true; // 'all'
+        });
+
+        this.filteredAppointments.set(final);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.filteredAppointments.set([]);
+        this.loading.set(false);
+      }
+    });
   }
+
 
   updateStatus(id: number, status: 'accepted' | 'rejected') {
     // Für 'rejected' soll Kommentar per submitRejection gesendet werden, daher hier nur 'accepted' benutzen
@@ -165,4 +194,10 @@ export class OfferDetailComponent implements OnInit {
   currentUserId(): number | null {
     return this.currentUser()?.id ?? null;
   }
+
+  setTimeFilter(filter: 'all' | 'upcoming' | 'past') {
+    this.appointmentTimeFilter.set(filter);
+    this.loadFilteredAppointments();
+  }
+
 }

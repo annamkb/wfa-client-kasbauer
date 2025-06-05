@@ -16,11 +16,6 @@ import {AuthenticationService} from '../shared/authentication.service';
   styles: ``
 })
 export class HomeComponent {
-  isLoggedIn = signal(false);
 
-  constructor(private authService: AuthenticationService) {}
-
-  ngOnInit() {
-    this.isLoggedIn.set(this.authService.isLoggedIn());
-  }
+  constructor() {}
 }

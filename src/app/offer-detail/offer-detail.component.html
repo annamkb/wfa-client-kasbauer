@@ -4,7 +4,7 @@
 
 
 @let o = offer();
-@let apps = userRole() === 'student' ? filteredAppointments() : appointments();
+@let apps = appointments();
 
 
 <h1 class="mb-8">Offer Detailansicht</h1>
@@ -36,10 +36,36 @@
 
 
   <h3 class="my-4">Termine</h3>
-    @if (userRole() === 'student') {
-      <bs-appointment-status-filter (statusSelected)="onStatusSelected($event)"></bs-appointment-status-filter>
-    }
-    @if (apps?.length) {
+<!--    @if (userRole() === 'student') {-->
+<!--      <bs-appointment-status-filter (statusSelected)="onStatusSelected($event)"></bs-appointment-status-filter>-->
+<!--    }-->
+  <div class="mb-4 flex gap-2">
+    <!--    [ngClass] ist eine Angular-Direktive zum dynamischen Zuweisen von CSS-Klassen-->
+    <button
+      class="btn btn-sm"
+      [ngClass]="{ 'btn-accent': appointmentTimeFilter() === 'all', 'btn-outline': appointmentTimeFilter() !== 'all' }"
+      (click)="setTimeFilter('all')"
+    >
+      Alle anzeigen
+    </button>
+    <button
+      class="btn btn-sm"
+      [ngClass]="{ 'btn-accent': appointmentTimeFilter() === 'upcoming', 'btn-outline': appointmentTimeFilter() !== 'upcoming' }"
+      (click)="setTimeFilter('upcoming')"
+    >
+      Zukünftige Termine
+    </button>
+    <button
+      class="btn btn-sm"
+      [ngClass]="{ 'btn-accent': appointmentTimeFilter() === 'past', 'btn-outline': appointmentTimeFilter() !== 'past' }"
+      (click)="setTimeFilter('past')"
+    >
+      Vergangene Termine
+    </button>
+  </div>
+
+
+  @if (apps?.length) {
       <ul class="flex flex-col gap-2">
         @for (app of apps; track app.id) {
           <li class="border p-2 rounded">
@@ -57,7 +83,11 @@
 
             @if (userRole() === 'student' && (app.status === 'offered' || app.user_id === currentUserId())) {
               <div class="flex gap-2 mt-2">
-
+                @if (loading()) {
+                  <div class="flex items-center gap-2">
+                    <div class="loading loading-ring"></div>
+                  </div>
+                } @else {
                     @if (app.status === 'offered') {
                       <div class="flex flex-col gap-2">
                         <!-- Button-Leiste -->
@@ -93,7 +123,7 @@
                         }
                       </div>
                     }
-
+                }
 
 
 

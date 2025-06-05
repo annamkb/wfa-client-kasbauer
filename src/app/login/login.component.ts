@@ -1,8 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../shared/authentication.service';
-import { TutoringService } from '../shared/tutoring.service';
+import {Component, OnInit, signal} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {AuthenticationService} from '../shared/authentication.service';
+import {TutoringService} from '../shared/tutoring.service';
 import {User} from '../shared/user';  // Import
 
 interface Response {
@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit {
   loginError: string | null = null;
   loadingLogin = signal(false);
   loadingUser = signal(false);
-
 
   constructor(
     private fb: FormBuilder,
@@ -98,8 +97,6 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-
-
 
 
   isLoggedIn(): boolean {

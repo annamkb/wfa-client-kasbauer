@@ -220,5 +220,13 @@ export class TutoringService {
       );
   }
 
+    getAppointmentsHistory(userId: number): Observable<{ upcoming: Appointment[], past: Appointment[] }> {
+      return this.http.get<{ upcoming: Appointment[], past: Appointment[] }>(`${this.api}/users/${userId}/appointments/history`)
+        .pipe(
+          retry(3),
+          catchError(this.errorHandler)
+        );
+    }
+
 
 }
